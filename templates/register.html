@@ -7,17 +7,17 @@
 
 {% block content%}
 <div class="container">
-    <form action="/register" class="form " id="createAccount" method="post">
+    <form action="/user/register" class="form " id="createAccount" method="POST">
         
        <h1 class="form__title">Create Account</h1>
        <div class="form__message form__message--error"></div>
 
        <div class="form__input-group">
-           <input type="text" name="userName" id="signupUsername" class="form__input" autofocus placeholder="Username">
+           <input type="text" name="fullname" id="signupUsername" class="form__input" autofocus placeholder="Username">
            <div class="form__input-error-message"></div>
        </div>
        <div class="form__input-group">
-           <input type="text" name="email" class="form__input" autofocus placeholder="Email Address">
+           <input type="email" name="email" class="form__input" autofocus placeholder="Email Address">
            <div class="form__input-error-message"></div>
        </div>
        <div class="form__input-group">
@@ -30,7 +30,7 @@
        </div>
 
        <label for="isCreator">Are you a creator?</label>
-       <input type="checkbox" id="isCreator" name="isCreator"><br><br>
+       <input type="checkbox" id="isCreator" name="isCreator" value="publisher"><br><br>
 
 
        <button class="form__button" type="submit">Continue</button>
