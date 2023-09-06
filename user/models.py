@@ -17,7 +17,7 @@ class User:
                     "password": request.form.get('password'),
                     "role": request.form.get('isCreator')
                 }
-                result= db.users.insert_one(user_schema).json()
+                result= db.users.insert_one(user_schema)
                 
                 return result, 200
             elif request.form.get('password') == request.form.get('passwordConfirm') and not bool(request.form.get('isCreator')):
@@ -27,12 +27,11 @@ class User:
                     "password": request.form.get('password'),
                     "role": "advertiser"
                 }
-                result = db.users.insert_one(user_schema).json()
+                result = db.users.insert_one(user_schema)
                 return result, 200
             
             else:
-                Error= "Password not match"
-                return Error
+                return "Password not match"
 
 
        
