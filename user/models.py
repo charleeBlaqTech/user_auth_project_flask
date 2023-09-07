@@ -18,8 +18,8 @@ class User:
                     "role": request.form.get('isCreator')
                 }
                 result= db.users.insert_one(user_schema)
-                
-                return result, 200
+                if bool(result):
+                     return 200
             elif request.form.get('password') == request.form.get('passwordConfirm') and not bool(request.form.get('isCreator')):
                 user_schema= {
                     "fullname": request.form.get('fullname'),
@@ -28,10 +28,21 @@ class User:
                     "role": "advertiser"
                 }
                 result = db.users.insert_one(user_schema)
-                return result, 200
-            
+                if bool(result):
+                    return 200
             else:
                 return "Password not match"
+            
+    def signin(self):
+        if bool(request.form.get('password')) and bool(request.form.get('useremail')):
+            if not bool(db.users.find_one({"email": request.form.get('useremail')})):
+                return "USER WITH THIS EMAIL DOES NOT EXIST"
+            else:
+                result= db.users.find_one({"email":request.form.get('useremail')})
+                if bool(result):
+                    return result
+        else:
+            return "inputs cannot be empty"
 
 
        

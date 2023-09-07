@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, render_template, jsonify
+from flask import Flask, redirect, request, render_template, url_for, make_response
 from app import app
 from user.models import User
 
@@ -12,14 +12,22 @@ def home():
 
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/user/login', methods=['POST', 'GET'])
 def login():
-    return render_template('login.html')
+    if request.method == "GET":
+        return render_template('login.html')
+    else:
+        response_result= User().signin()
+        return render_template('home.html', DATA=response_result)
 
 
 @app.route('/user/register', methods=['POST'])
 def register():
-    return User().signup()
+    data_result= User().signup()
+    if data_result == 200:
+        return redirect(url_for('login'))
+    else:
+        return make_response(data_result)
     # if request.method == "POST":
 
     #     return make_response('you want to make a post request')

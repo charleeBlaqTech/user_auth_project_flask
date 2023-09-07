@@ -8,7 +8,8 @@
 {% block content%}
 
     <div class="container">
-        <form action="/login" class="form" id="login" method="post">
+        <form action="/user/login" class="form" id="login" method="post">
+
             <h1 class="form__title">Login</h1>
             <div class="form__message form__message--error"></div>
 
@@ -27,7 +28,7 @@
             </p>
             
             <p class="form__text">
-                <a href="/register" id="linkCreateAccount">Don't have an account? Create account</a>
+                <a href="/" id="linkCreateAccount">Don't have an account? Create account</a>
             </p>
         </form>
         
