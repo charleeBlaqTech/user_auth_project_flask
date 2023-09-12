@@ -6,9 +6,19 @@
 
 
 {% block content%}
-    {% if DATA %}
-        <h1>welcome to the home page {{DATA}} </h1>
-    {%else%}
-        <h1>welcome to the home page</h1>
-    {%endif%}
+   
+
+    <section id="home-section">
+        <main class="home-main">
+            <header>
+                <h1>welcome to the home page <span>{{session['user']['fullname']}}</span></h1>
+                <h1>Email:: <span>{{session['user']['email']}}</span></h1>
+            </header>
+           
+            <div class="btn-wrapper">
+                <button><a href="/logout">Logout</a></button>
+            </div>
+
+        </main>
+    </section>
 {% endblock%}

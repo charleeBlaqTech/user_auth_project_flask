@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask,redirect, request,session,url_for,render_template
 from datetime import datetime, timedelta
 import bcrypt
 from app import db
@@ -6,10 +6,18 @@ from app import db
 
 class User:
 
+    def start_session(self,user):
+        del user['password']
+        del user['_id']
+        session['logged_in']= True
+        session['user']= user
+        return user
+
+
     def signup(self):
 
-        if bool(db.users.find_one({"email": request.form.get('email')})):
-            return "USER WITH THIS EMAIL ALREADY EXIST"
+        if bool(db.users.find_one({"email": request.form.get('email').strip()})):
+            return render_template('register.html', ERROR="USER WITH THIS EMAIL ALREADY EXIST")
         else:
 
             if request.form.get('password').strip() == request.form.get('passwordConfirm').strip() and bool(request.form.get('isCreator')):
@@ -22,7 +30,8 @@ class User:
                 }
                 result= db.users.insert_one(user_schema)
                 if bool(result):
-                     return 200
+                    self.start_session(user_schema)
+                    return redirect('/')
             elif request.form.get('password').strip() == request.form.get('passwordConfirm').strip() and not bool(request.form.get('isCreator')):
                 byte_password= request.form.get('password').encode("utf-8")
                 user_schema= {
@@ -33,43 +42,33 @@ class User:
                 }
                 result = db.users.insert_one(user_schema)
                 if bool(result):
-                    return 200
+                    self.start_session(user_schema)
+                    return redirect('/')
             else:
-                return "Password not match"
+                return render_template('register.html', ERROR="Password not match")
       
             
     def signin(self):
         if not request.form.get('password').strip() == "" and not request.form.get('useremail').strip()  == "":
             if not bool(db.users.find_one({"email": request.form.get('useremail')})):
-                return {
-                            'ERROR_MESSAGE': "USER WITH THIS EMAIL DOES NOT EXIST", 
-                            "status": 400
-                        }
+                return render_template('login.html', ERROR="USER WITH THIS EMAIL DOES NOT EXIST")
             else:
                 result= db.users.find_one({"email":request.form.get('useremail')})
                 if bool(result):
                     password= request.form.get('password').strip().encode("utf-8")
                     if bool(bcrypt.checkpw(password, result['password'])):
-                        return {
-                            'user_name': result['fullname'], 
-                            "status": 200
-                        }
+                        # set session here
+                        self.start_session(result)
+                        return redirect('/')
                     else:
-                        return {
-                            'ERROR_MESSAGE': "password/email not correct or user not exist", 
-                            "status": 400
-                        }
+                        return render_template('login.html', ERROR="password/email not correct or user not exist")
                 else:
-                    return {
-                            'ERROR_MESSAGE': "password/username not matched", 
-                            "status": 400
-                        }
+                    return render_template('login.html', ERROR="password/username not matched")
         else:
-            return  {
-                        'ERROR_MESSAGE': "inputs cannot be empty", 
-                        "status": 400
-                    }
+            return  render_template('login.html', ERROR="inputs cannot be empty")
 
-
+    def signout(self):
+        session.clear()
+        return redirect(url_for('login'))
        
         

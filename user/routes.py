@@ -1,26 +1,35 @@
-from flask import Flask, redirect, request, render_template, url_for, make_response
-from app import app
+from flask import Flask, redirect, request, render_template, url_for, session
+from functools import wraps
+from app import app, db
 from user.models import User
 
 
 
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('login'))
+    return wrapper
+
 
 
 @app.route('/', methods=['GET'])
+@login_required
 def home():
-    return render_template('register.html')
+    return render_template('home.html')
 
 
 
 
-
-@app.route('/user/register', methods=['POST'])
+@app.route('/user/register', methods=['POST', 'GET'])
 def register():
-    data_result= User().signup()
-    if data_result == 200:
-        return redirect(url_for('login'))
+    if request.method == "POST":
+        return User().signup()
     else:
-        return render_template('register.html', ERROR= data_result);
+        return render_template('register.html')
 
 
 
@@ -30,13 +39,11 @@ def login():
     if request.method == "GET":
         return render_template('login.html')
     else:
-        response_result= User().signin()
-            
-        if response_result['status'] == 200:
-            return render_template('home.html', DATA=response_result["user_name"])
-        else:
-            return render_template('login.html', ERROR=response_result["ERROR_MESSAGE"])
-
-        
+        return User().signin()
 
 
+
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+        return User().signout()
