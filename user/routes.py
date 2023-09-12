@@ -12,13 +12,6 @@ def home():
 
 
 
-@app.route('/user/login', methods=['POST', 'GET'])
-def login():
-    if request.method == "GET":
-        return render_template('login.html')
-    else:
-        response_result= User().signin()
-        return render_template('home.html', DATA=response_result)
 
 
 @app.route('/user/register', methods=['POST'])
@@ -27,9 +20,23 @@ def register():
     if data_result == 200:
         return redirect(url_for('login'))
     else:
-        return make_response(data_result)
-    # if request.method == "POST":
+        return render_template('register.html', ERROR= data_result);
 
-    #     return make_response('you want to make a post request')
-    # else:
-    #     return User().signup();
+
+
+
+@app.route('/user/login', methods=['POST', 'GET'])
+def login():
+    if request.method == "GET":
+        return render_template('login.html')
+    else:
+        response_result= User().signin()
+            
+        if response_result['status'] == 200:
+            return render_template('home.html', DATA=response_result["user_name"])
+        else:
+            return render_template('login.html', ERROR=response_result["ERROR_MESSAGE"])
+
+        
+
+

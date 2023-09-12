@@ -6,5 +6,9 @@
 
 
 {% block content%}
-    <h1>welcome to the home page {{DATA}}</h1>
+    {% if DATA %}
+        <h1>welcome to the home page {{DATA}} </h1>
+    {%else%}
+        <h1>welcome to the home page</h1>
+    {%endif%}
 {% endblock%}
